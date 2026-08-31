@@ -1,0 +1,185 @@
+---
+title: "Homework 2: Individual"
+author: "Michael Mendoza"
+format: html
+editor: visual
+date: 31AUG2026
+purpose: create HW2 content (individual)
+---
+
+# Question 1
+
+The following code creates the pre-/post-treatment records as 2 different vectors
+
+```{r}
+
+pre_bp <- c(130, 128, 116, 124, 133, 134, 118, 126, 114, 127, 141, 138, 128, 140, 137, 131, 120, 128, 139, 135)
+print(pre_bp)
+
+post_bp <- c(114, 98, 113, 99, 107, 116, 113, 111, 119, 117, 101, 119, 130, 122, 106, 106, 124, 102, 117, 113)
+print(post_bp)
+
+```
+
+The following Code assigns names to these vectors and creates a vector of these names.
+
+```{r}
+names(pre_bp) <- paste("Subject", 1:20, sep = "_")
+print(pre_bp)
+
+names(post_bp) <- paste("Subject", 1:20, sep = "_")
+print(post_bp)
+
+patient <- paste("Subject", 1:20, sep = "_")
+print(patient)
+```
+
+The following stores the difference of the pre-/post- treatment records, a positive record indicates a decrease in blood pressure.
+
+```{r}
+diff_bp <- pre_bp - post_bp
+print(diff_bp)
+```
+
+This is the mean of the difference of among all patients.
+
+```{r}
+
+print(mean(diff_bp))
+```
+
+The following returns a vector of which subjects experienced a positive change, and stores the records as a subset.
+
+```{r}
+
+print(which(diff_bp>0))
+
+pos_subset <- diff_bp[which(diff_bp>0)]
+```
+
+This is the mean of the difference of among patients who experienced a decrease in blood pressure.
+
+```{r}
+print(mean(diff_bp))
+```
+
+# Question 2
+
+The following code creates a data frame with 4 variables: patient, pre_bp, post_bp, and diff_bp
+
+```{r}
+bp_df <- data.frame(patient, pre_bp, post_bp, diff_bp)
+```
+
+Return only negative difference patients.
+
+```{r}
+print(bp_df[bp_df$diff_bp < 0, ])
+```
+
+Adding True/False flag to dataset when post_bp \< 120
+
+```{r}
+bp_df$lt_120 <- bp_df$diff_bp < 0
+print(bp_df)
+```
+
+Knit code to print bp_df to final document.
+
+```{r}
+knitr::kable(bp_df, caption = 'Blood Pressure Data Table')
+```
+
+# Question 3
+
+Create the new dataset.
+
+```{r}
+pre_bp2 <- c(138, 135, 147, 117, 152, 134, 114, 121, 131, 130)
+
+post_bp2 <- c(105, 136, 123, 130, 134, 143, 135, 139, 120, 124)
+
+names(pre_bp2) <- paste("Subject", 1:10, sep = "_")
+
+names(post_bp2) <- paste("Subject", 1:10, sep = "_")
+
+patient2 <- paste("Subject", 1:10, sep = "_")
+
+diff_bp2 <- pre_bp2 - post_bp2
+
+bp_df2 <- data.frame("patient" = patient2, "pre_bp" = pre_bp2, "post_bp" = post_bp2, "diff_bp" = diff_bp2)
+
+bp_df2$lt_120 <- bp_df2$diff_bp < 0
+```
+
+Create the list with 2 elements: treatment, placebo.
+
+```{r}
+bp_list <- list("treatment" = bp_df, "placebo" = bp_df2)
+```
+
+3 different types of syntax to access the first list element.
+
+```{r}
+
+bp_list[[1]]
+
+bp_list["treatment"]
+
+head(bp_list, 1)
+
+```
+
+Access Placebo: pre_bp in a single line.
+
+```{r}
+print(bp_list$placebo$pre_bp)
+```
+
+# Question 4
+
+Create new column named status in each dataset in listing
+
+```{r}
+bp_list$treatment$status <- character(20)
+
+bp_list$placebo$status <- character(10)
+```
+
+Using if/else lolgic to derive status flag in treatment dataframe.
+
+```{r}
+for (i in 1:20) {
+  
+  if (bp_list$treatment$post_bp[i] <= 120) {
+    bp_list$treatment$status[i] <- "optimal"
+  }
+    else if (bp_list$treatment$post_bp[i] > 130) {
+      bp_list$treatment$status[i] <- "high"
+    }
+    else {
+      bp_list$treatment$status[i] <- "borderline"
+    }
+}
+
+print(bp_list$treatment)
+```
+
+Repeat for placebo data
+
+```{r}
+for (i in 1:10) {
+  
+  if (bp_list$placebo$post_bp[i] <= 120) {
+    bp_list$placebo$status[i] <- "optimal"
+  }
+  else if (bp_list$placebo$post_bp[i] > 130) {
+    bp_list$placebo$status[i] <- "high"
+  }
+  else {
+    bp_list$placebo$status[i] <- "borderline"
+  }
+}
+
+print(bp_list$placebo)
+```
